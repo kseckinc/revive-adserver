@@ -42,7 +42,7 @@ if (isset($_POST['submitok']) && $_POST['submitok'] == 'true') {
 
     OA_Permission::checkSessionToken();
 
-    // Get the DB_DataObject for the current user
+    /** @var DataObjects_Users $doUsers */
     $doUsers = OA_Dal::factoryDO('users');
     $doUsers->get(OA_Permission::getUserId());
 
@@ -66,7 +66,7 @@ if (isset($_POST['submitok']) && $_POST['submitok'] == 'true') {
         }
     }
     if (!count($aErrormessage) && $changePassword) {
-        $result = $oPlugin->changePassword($doUsers, $pw, $pwold);
+        $result = $oPlugin->changePassword($doUsers, $pw);
         if (PEAR::isError($result)) {
             $aErrormessage[0][] = $result->getMessage();
         }
@@ -74,7 +74,7 @@ if (isset($_POST['submitok']) && $_POST['submitok'] == 'true') {
     if (!count($aErrormessage)) {
         if ($doUsers->update() === false) {
             // Unable to update the preferences
-            $aErrormessage[0][] = $strUnableToWritePrefs;
+            $aErrormessage[0][] = $GLOBALS['strUnableToWritePrefs'];
         } else {
             // Regenerate session ID and clear all other sessions
             phpAds_SessionRegenerateId(true);
